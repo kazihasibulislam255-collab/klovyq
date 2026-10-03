@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-ink-800 bg-white antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-ink-900 text-white font-medium px-6 py-3 rounded-xl transition-all hover:bg-ink-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 bg-gold-500 text-white font-medium px-6 py-3 rounded-xl transition-all hover:bg-gold-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 border border-ink-200 text-ink-700 font-medium px-6 py-3 rounded-xl transition-all hover:border-ink-400 hover:bg-ink-50 active:scale-95;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 text-ink-600 font-medium px-4 py-2 rounded-lg transition-all hover:bg-ink-50 hover:text-ink-900;
+  }
+  .input-field {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-ink-800 placeholder-ink-300 transition-all focus:border-ink-400 focus:ring-2 focus:ring-ink-100 focus:outline-none;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-ink-50 transition-all;
+  }
+  .section-title {
+    @apply text-2xl md:text-3xl font-bold text-ink-900;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f6f6f7;
+}
+::-webkit-scrollbar-thumb {
+  background: #c6c6cd;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9d9da9;
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
