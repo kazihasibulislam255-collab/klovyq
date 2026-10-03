@@ -20,7 +20,7 @@ function App() {
   const [categoryOpen, setCategoryOpen] = useState(false);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/klovyq">
       <StoreProvider>
         <CartProvider>
           <WishlistProvider>
