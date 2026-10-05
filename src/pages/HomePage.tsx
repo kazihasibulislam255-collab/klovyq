@@ -196,13 +196,13 @@ export default function HomePage() {
 
       {/* Stock Clearance */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="bg-gradient-to-r from-danger-500 to-danger-600 rounded-2xl p-6 md:p-8 mb-6 text-white">
+        <div className="bg-gradient-to-r from-danger-500 to-danger-600 rounded-2xl p-5 md:p-8 mb-6 text-white">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white">Stock Clearance Sale</h2>
-              <p className="text-white/80 mt-1">Last chance to grab these deals before they're gone!</p>
+              <h2 className="text-xl md:text-3xl font-bold text-white">Stock Clearance Offer</h2>
+              <p className="text-white/80 mt-1 text-sm md:text-base">Last chance to grab these deals before they're gone!</p>
             </div>
-            <Link to="/category/stock-clearance" className="inline-flex items-center gap-2 bg-white text-danger-600 font-semibold px-5 py-2.5 rounded-xl hover:bg-danger-50 transition-all">
+            <Link to="/category/stock-clearance" className="inline-flex items-center gap-2 bg-white text-danger-600 font-semibold px-5 py-2.5 rounded-xl hover:bg-danger-50 transition-all text-sm">
               Shop Clearance <ArrowRight size={18} />
             </Link>
           </div>

@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Heart, ShoppingCart, User, Menu, X, ChevronDown } from 'lucide-react';
+import { Search, Heart, ShoppingCart, User, Menu, ChevronDown } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useStore } from '@/context/StoreContext';
-import type { CategorySlug } from '@/types';
 
 interface HeaderProps {
   onOpenCategories: () => void;
@@ -38,7 +37,7 @@ export default function Header({ onOpenCategories }: HeaderProps) {
 
   return (
     <>
-      {/* Top bar */}
+      {/* Top bar — desktop only */}
       <div className="bg-ink-900 text-ink-200 text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <span>Free delivery on orders over ৳2000</span>
@@ -49,27 +48,27 @@ export default function Header({ onOpenCategories }: HeaderProps) {
         </div>
       </div>
 
-      {/* Main header */}
+      {/* Main header — compact on mobile */}
       <header className={`sticky top-0 z-40 bg-white transition-shadow ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16 md:h-20 gap-4">
-            {/* Mobile menu */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between h-14 md:h-20 gap-2 sm:gap-4">
+            {/* Hamburger — mobile */}
             <button
               onClick={onOpenCategories}
-              className="lg:hidden text-ink-700 hover:text-ink-900"
+              className="lg:hidden w-10 h-10 flex items-center justify-center text-ink-700 hover:text-ink-900 flex-shrink-0"
               aria-label="Open menu"
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
 
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-              <span className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-ink-900">
+              <span className="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-ink-900">
                 Klovyq
               </span>
             </Link>
 
-            {/* Search (desktop) */}
+            {/* Search — desktop */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-4">
               <div className="relative w-full">
                 <input
@@ -86,38 +85,46 @@ export default function Header({ onOpenCategories }: HeaderProps) {
             </form>
 
             {/* Actions */}
-            <div className="flex items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2 flex-shrink-0">
+              {/* Search — mobile */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="md:hidden w-10 h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700"
+                className="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700"
                 aria-label="Search"
               >
-                <Search size={22} />
+                <Search size={20} />
               </button>
-              <Link to="/wishlist" className="relative w-10 h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700 hover:text-ink-900 transition-colors" aria-label="Wishlist">
-                <Heart size={22} />
+              {/* Wishlist */}
+              <Link to="/wishlist" className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700 hover:text-ink-900 transition-colors" aria-label="Wishlist">
+                <Heart size={20} />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-danger-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="absolute top-0.5 right-0.5 bg-danger-500 text-white text-[9px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
                     {wishlistCount}
                   </span>
                 )}
               </Link>
-              <Link to="/cart" className="relative w-10 h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700 hover:text-ink-900 transition-colors" aria-label="Cart">
-                <ShoppingCart size={22} />
+              {/* Cart */}
+              <Link to="/cart" className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700 hover:text-ink-900 transition-colors" aria-label="Cart">
+                <ShoppingCart size={20} />
                 {itemCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-gold-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="absolute top-0.5 right-0.5 bg-gold-500 text-white text-[9px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
                     {itemCount}
                   </span>
                 )}
               </Link>
+              {/* Account */}
               <Link to="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-ink-50 text-ink-700 hover:text-ink-900 transition-colors" aria-label="Account">
                 <User size={22} />
                 <span className="text-sm font-medium">Account</span>
               </Link>
+              {/* Account — mobile icon only */}
+              <Link to="/account" className="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-700 hover:text-ink-900 transition-colors" aria-label="Account">
+                <User size={20} />
+              </Link>
             </div>
           </div>
 
-          {/* Category nav (desktop) */}
+          {/* Category nav — desktop */}
           <nav className="hidden lg:flex items-center gap-1 h-12 border-t border-ink-50">
             <button
               onClick={onOpenCategories}
@@ -144,7 +151,7 @@ export default function Header({ onOpenCategories }: HeaderProps) {
 
         {/* Mobile search */}
         {searchOpen && (
-          <div className="md:hidden border-t border-ink-100 p-4 animate-slide-up">
+          <div className="md:hidden border-t border-ink-100 p-3 animate-slide-up">
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"

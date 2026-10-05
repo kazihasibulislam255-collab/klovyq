@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { X, ChevronRight } from 'lucide-react';
+import { X, ChevronRight, Home, Sparkles, Tag } from 'lucide-react';
 import { useStore } from '@/context/StoreContext';
 
 interface CategoryDrawerProps {
@@ -35,57 +35,79 @@ export default function CategoryDrawer({ open, onClose }: CategoryDrawerProps) {
 
       {/* Drawer */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl transition-transform duration-300 ${
+        className={`fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl transition-transform duration-300 flex flex-col ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-ink-100">
-          <h2 className="font-serif text-xl font-bold text-ink-900">Categories</h2>
+        {/* Header */}
+        <div className="bg-ink-900 text-white px-5 py-4 flex items-center justify-between">
+          <div>
+            <h2 className="font-serif text-xl font-bold text-white">Klovyq</h2>
+            <p className="text-xs text-ink-300 mt-0.5">Modern Style, Everyday Choice</p>
+          </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full hover:bg-ink-50 flex items-center justify-center text-ink-600"
+            className="w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-white"
             aria-label="Close menu"
           >
-            <X size={22} />
+            <X size={20} />
           </button>
         </div>
 
-        <div className="overflow-y-auto h-[calc(100%-65px)]">
+        {/* Quick links */}
+        <div className="grid grid-cols-3 gap-2 p-3 border-b border-ink-50">
+          <Link
+            to="/"
+            onClick={onClose}
+            className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-ink-50 transition-colors"
+          >
+            <Home size={20} className="text-ink-700" />
+            <span className="text-xs font-medium text-ink-700">Home</span>
+          </Link>
+          <Link
+            to="/category/new-arrivals"
+            onClick={onClose}
+            className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-ink-50 transition-colors"
+          >
+            <Sparkles size={20} className="text-success-600" />
+            <span className="text-xs font-medium text-ink-700">New Arrivals</span>
+          </Link>
           <Link
             to="/category/all"
             onClick={onClose}
-            className="flex items-center justify-between px-5 py-3.5 hover:bg-ink-50 transition-colors border-b border-ink-50"
+            className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-ink-50 transition-colors"
           >
-            <span className="font-medium text-ink-800">All Products</span>
-            <ChevronRight size={18} className="text-ink-300" />
+            <Tag size={20} className="text-ink-700" />
+            <span className="text-xs font-medium text-ink-700">All Products</span>
           </Link>
+        </div>
 
+        {/* Categories list */}
+        <div className="overflow-y-auto flex-1">
+          <p className="text-xs font-semibold text-ink-400 uppercase tracking-wide px-5 pt-3 pb-1">Categories</p>
           {drawerCategories.map(cat => (
             <Link
               key={cat!.id}
               to={`/category/${cat!.slug}`}
               onClick={onClose}
-              className="flex items-center gap-3 px-5 py-3.5 hover:bg-ink-50 transition-colors border-b border-ink-50"
+              className="flex items-center gap-3 px-5 py-3 hover:bg-ink-50 transition-colors border-b border-ink-50/70"
             >
               <img
                 src={cat!.image}
                 alt={cat!.name}
-                className="w-10 h-10 rounded-lg object-cover"
+                className="w-9 h-9 rounded-lg object-cover flex-shrink-0"
               />
-              <span className="font-medium text-ink-800 flex-1">{cat!.name}</span>
-              <ChevronRight size={18} className="text-ink-300" />
+              <span className={`font-medium flex-1 ${cat!.slug === 'stock-clearance' ? 'text-danger-600' : 'text-ink-800'}`}>
+                {cat!.name}
+              </span>
+              <ChevronRight size={16} className="text-ink-300" />
             </Link>
           ))}
+        </div>
 
-          <div className="p-4 mt-2">
-            <Link
-              to="/category/new-arrivals"
-              onClick={onClose}
-              className="flex items-center justify-center gap-2 w-full bg-success-500 text-white font-medium py-3 rounded-xl hover:bg-success-600 transition-colors"
-            >
-              New Arrivals
-            </Link>
-          </div>
+        {/* Footer */}
+        <div className="border-t border-ink-50 p-4">
+          <p className="text-xs text-ink-400 text-center">Hotline: +880 1700-000000</p>
         </div>
       </aside>
     </>

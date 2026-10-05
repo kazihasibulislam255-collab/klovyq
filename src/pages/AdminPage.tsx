@@ -403,8 +403,8 @@ export default function AdminPage() {
             } else {
               addProduct({
                 ...data,
-                slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-                images: data.images.length > 0 ? data.images : ['https://images.pexels.com/photos/27046146/pexels-photo-27046146.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'],
+                slug: (data.name ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+                images: data.images && data.images.length > 0 ? data.images : ['https://images.pexels.com/photos/27046146/pexels-photo-27046146.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'],
                 reviewCount: 0,
                 rating: 0,
                 description: data.description || 'No description available.',
