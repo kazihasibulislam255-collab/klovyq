@@ -268,11 +268,14 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-ink-400 text-xs uppercase">
-                    <th className="text-left py-3 px-4">Order</th>
+                    <th className="text-left py-3 px-4">Order ID</th>
                     <th className="text-left py-3 px-4 hidden md:table-cell">Customer</th>
-                    <th className="text-left py-3 px-4 hidden lg:table-cell">Items</th>
+                    <th className="text-left py-3 px-4 hidden lg:table-cell">Phone</th>
                     <th className="text-right py-3 px-4">Total</th>
+                    <th className="text-left py-3 px-4 hidden xl:table-cell">Payment</th>
+                    <th className="text-left py-3 px-4 hidden xl:table-cell">Delivery</th>
                     <th className="text-center py-3 px-4">Status</th>
+                    <th className="text-left py-3 px-4 hidden md:table-cell">Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -280,14 +283,14 @@ export default function AdminPage() {
                     <tr key={order.id} className="border-b border-ink-50 hover:bg-ink-50/50">
                       <td className="py-3 px-4">
                         <p className="font-medium text-ink-900">{order.orderNumber}</p>
-                        <p className="text-xs text-ink-400">{new Date(order.createdAt).toLocaleDateString()}</p>
                       </td>
                       <td className="py-3 px-4 hidden md:table-cell">
                         <p className="text-ink-900">{order.customerName}</p>
-                        <p className="text-xs text-ink-400">{order.phone}</p>
                       </td>
-                      <td className="py-3 px-4 hidden lg:table-cell text-ink-600">{order.items.length} items</td>
+                      <td className="py-3 px-4 hidden lg:table-cell text-ink-600">{order.phone}</td>
                       <td className="py-3 px-4 font-bold text-ink-900 text-right">{formatBDT(order.total)}</td>
+                      <td className="py-3 px-4 hidden xl:table-cell text-ink-600">{order.paymentMethod}</td>
+                      <td className="py-3 px-4 hidden xl:table-cell text-ink-600">{order.deliveryOption}</td>
                       <td className="py-3 px-4">
                         <select
                           value={order.status}
@@ -299,6 +302,7 @@ export default function AdminPage() {
                           ))}
                         </select>
                       </td>
+                      <td className="py-3 px-4 hidden md:table-cell text-ink-400 text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -409,7 +413,7 @@ export default function AdminPage() {
                 rating: 0,
                 description: data.description || 'No description available.',
                 specifications: data.specifications || [],
-                deliveryInfo: 'Free delivery on orders over ৳2000. Standard delivery in 2-4 business days.',
+                deliveryInfo: 'Standard Delivery: 2–4 days — ৳60. Express Delivery: 1–2 days — ৳100. Cash on Delivery available.',
                 variants: data.variants || { sizes: ['One Size'], colors: [{ name: 'Black', hex: '#1a1a1a' }] },
                 popularity: 50,
                 isBestSeller: false,

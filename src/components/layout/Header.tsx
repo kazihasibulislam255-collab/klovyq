@@ -40,7 +40,7 @@ export default function Header({ onOpenCategories }: HeaderProps) {
       {/* Top bar — desktop only */}
       <div className="bg-ink-900 text-ink-200 text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <span>Free delivery on orders over ৳2000</span>
+          <span>Fast delivery: Standard 2–4 days / Express 1–2 days</span>
           <div className="flex items-center gap-4">
             <Link to="/admin" className="hover:text-white transition-colors">Admin Dashboard</Link>
             <span>Hotline: +880 1700-000000</span>

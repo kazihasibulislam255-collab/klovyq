@@ -1,21 +1,29 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Check, CreditCard, Truck, MapPin, User, Phone, Mail, ShoppingBag } from 'lucide-react';
+import { Check, CreditCard, Truck, MapPin, User, Phone, Mail, ShoppingBag, Package } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
 import { formatBDT } from '@/data/mockData';
 
 const DELIVERY_OPTIONS = [
-  { value: 'standard', label: 'Standard (2-4 days)', charge: 60 },
-  { value: 'express', label: 'Express (1-2 days)', charge: 100 },
+  { value: 'standard', label: 'Standard (2–4 days)', charge: 60 },
+  { value: 'express', label: 'Express (1–2 days)', charge: 100 },
 ];
+
+interface PlacedOrder {
+  orderNumber: string;
+  customerName: string;
+  total: number;
+  deliveryOption: string;
+  paymentMethod: string;
+}
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const { addOrder } = useStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { discount?: number; deliveryCharge?: number } | null;
+  const state = location.state as { discount?: number; deliveryOption?: string } | null;
   const appliedDiscount = state?.discount ?? 0;
 
   const [form, setForm] = useState({
@@ -25,29 +33,55 @@ export default function CheckoutPage() {
     address: '',
     city: '',
     area: '',
-    deliveryOption: 'standard',
+    deliveryOption: state?.deliveryOption ?? 'standard',
     paymentMethod: 'cod',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [orderPlaced, setOrderPlaced] = useState(false);
-  const [orderNumber, setOrderNumber] = useState('');
+  const [placing, setPlacing] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
 
-  const deliveryCharge = form.deliveryOption === 'express' ? 100 : (subtotal >= 2000 ? 0 : 60);
+  const deliveryCharge = DELIVERY_OPTIONS.find(d => d.value === form.deliveryOption)?.charge ?? 60;
   const total = subtotal - appliedDiscount + deliveryCharge;
 
-  if (orderPlaced) {
+  if (placedOrder) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center pb-28 lg:pb-16">
         <div className="w-20 h-20 rounded-full bg-success-50 flex items-center justify-center mx-auto mb-4">
           <Check size={40} className="text-success-600" />
         </div>
         <h2 className="text-2xl font-bold text-ink-900 mb-2">Order Placed Successfully!</h2>
-        <p className="text-ink-400 mb-1">Your order number is</p>
-        <p className="text-xl font-bold text-gold-500 mb-6">{orderNumber}</p>
-        <p className="text-sm text-ink-500 mb-6">We'll contact you shortly to confirm your order. Thank you for shopping with Klovyq!</p>
+        <p className="text-ink-400 mb-6">Thank you for your order. We'll contact you shortly to confirm.</p>
+
+        <div className="card p-6 text-left max-w-md mx-auto mb-6">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-ink-500">Order ID</span>
+              <span className="font-bold text-gold-500">{placedOrder.orderNumber}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-ink-500">Customer Name</span>
+              <span className="font-medium text-ink-900">{placedOrder.customerName}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-ink-500">Total Amount</span>
+              <span className="font-bold text-ink-900">{formatBDT(placedOrder.total)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-ink-500">Delivery Method</span>
+              <span className="font-medium text-ink-900">{placedOrder.deliveryOption}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-ink-500">Payment Method</span>
+              <span className="font-medium text-ink-900">{placedOrder.paymentMethod}</span>
+            </div>
+          </div>
+        </div>
+
         <div className="flex gap-3 justify-center">
           <Link to="/" className="btn-outline">Back to Home</Link>
-          <Link to="/category/all" className="btn-primary">Continue Shopping</Link>
+          <Link to="/category/all" className="btn-primary">
+            <ShoppingBag size={18} /> Continue Shopping
+          </Link>
         </div>
       </div>
     );
@@ -65,45 +99,60 @@ export default function CheckoutPage() {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.customerName.trim()) errs.customerName = 'Name is required';
-    if (!form.phone.trim()) errs.phone = 'Phone number is required';
+    if (!form.customerName.trim()) errs.customerName = 'Full Name is required';
+    if (!form.phone.trim()) errs.phone = 'Phone Number is required';
     else if (!/^(\+?880|0)?1[3-9]\d{8}$/.test(form.phone.replace(/[\s-]/g, ''))) errs.phone = 'Enter a valid Bangladeshi phone number';
     if (!form.email.trim()) errs.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Enter a valid email';
-    if (!form.address.trim()) errs.address = 'Address is required';
+    if (!form.address.trim()) errs.address = 'Full Address is required';
     if (!form.city.trim()) errs.city = 'City is required';
     if (!form.area.trim()) errs.area = 'Area is required';
+    if (!form.deliveryOption) errs.deliveryOption = 'Please select a delivery option';
+    if (!form.paymentMethod) errs.paymentMethod = 'Please select a payment method';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const deliveryLabel = DELIVERY_OPTIONS.find(d => d.value === form.deliveryOption)?.label ?? 'Standard';
-    const paymentLabel = form.paymentMethod === 'cod' ? 'Cash on Delivery' : 'bKash/Nagad (Coming Soon)';
+    setPlacing(true);
 
-    const num = addOrder({
-      customerName: form.customerName,
-      phone: form.phone,
-      email: form.email,
-      address: form.address,
-      city: form.city,
-      area: form.area,
-      deliveryOption: deliveryLabel,
-      items,
-      subtotal,
-      discount: appliedDiscount,
-      deliveryCharge,
-      total,
-      paymentMethod: paymentLabel,
-      status: 'pending',
-    });
+    const deliveryLabel = DELIVERY_OPTIONS.find(d => d.value === form.deliveryOption)?.label ?? 'Standard (2–4 days)';
+    const paymentLabel = 'Cash on Delivery';
 
-    setOrderNumber(num);
-    setOrderPlaced(true);
-    clearCart();
+    try {
+      const orderNumber = await addOrder({
+        customerName: form.customerName,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        city: form.city,
+        area: form.area,
+        deliveryOption: deliveryLabel,
+        items,
+        subtotal,
+        discount: appliedDiscount,
+        deliveryCharge,
+        total,
+        paymentMethod: paymentLabel,
+        status: 'pending',
+      });
+
+      setPlacedOrder({
+        orderNumber,
+        customerName: form.customerName,
+        total,
+        deliveryOption: deliveryLabel,
+        paymentMethod: paymentLabel,
+      });
+      clearCart();
+    } catch (err) {
+      console.error('Order placement failed:', err);
+    } finally {
+      setPlacing(false);
+    }
   };
 
   const inputClass = (field: string) => `w-full pl-11 pr-4 py-3 rounded-xl border bg-white text-sm transition-all focus:outline-none ${
@@ -219,7 +268,7 @@ export default function CheckoutPage() {
           {/* Delivery option */}
           <div className="card p-5">
             <h3 className="font-semibold text-ink-900 mb-4 flex items-center gap-2">
-              <Truck size={18} /> Delivery Option
+              <Truck size={18} /> Delivery Option *
             </h3>
             <div className="space-y-2">
               {DELIVERY_OPTIONS.map(opt => (
@@ -239,16 +288,17 @@ export default function CheckoutPage() {
                     />
                     <span className="text-sm font-medium text-ink-800">{opt.label}</span>
                   </div>
-                  <span className="text-sm font-bold text-ink-900">{opt.charge === 0 ? 'FREE' : formatBDT(opt.charge)}</span>
+                  <span className="text-sm font-bold text-ink-900">{formatBDT(opt.charge)}</span>
                 </label>
               ))}
+              {errors.deliveryOption && <p className="text-xs text-danger-600 mt-1">{errors.deliveryOption}</p>}
             </div>
           </div>
 
           {/* Payment method */}
           <div className="card p-5">
             <h3 className="font-semibold text-ink-900 mb-4 flex items-center gap-2">
-              <CreditCard size={18} /> Payment Method
+              <CreditCard size={18} /> Payment Method *
             </h3>
             <div className="space-y-2">
               <label className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${form.paymentMethod === 'cod' ? 'border-ink-900 bg-ink-50' : 'border-ink-200 hover:border-ink-300'}`}>
@@ -267,6 +317,7 @@ export default function CheckoutPage() {
                 <span className="text-sm font-medium text-ink-800">bKash / Nagad</span>
                 <span className="ml-auto badge bg-ink-100 text-ink-500">Coming Soon</span>
               </label>
+              {errors.paymentMethod && <p className="text-xs text-danger-600 mt-1">{errors.paymentMethod}</p>}
             </div>
           </div>
         </div>
@@ -301,8 +352,8 @@ export default function CheckoutPage() {
                 </div>
               )}
               <div className="flex justify-between text-ink-600">
-                <span>Delivery</span>
-                <span className="font-medium text-ink-900">{deliveryCharge === 0 ? 'FREE' : formatBDT(deliveryCharge)}</span>
+                <span>Delivery Charge</span>
+                <span className="font-medium text-ink-900">{formatBDT(deliveryCharge)}</span>
               </div>
               <div className="flex justify-between text-base font-bold text-ink-900 border-t border-ink-100 pt-3">
                 <span>Total</span>
@@ -310,8 +361,14 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <button type="submit" className="w-full btn-primary mt-4">
-              Place Order
+            <button type="submit" disabled={placing} className="w-full btn-primary mt-4 disabled:opacity-60">
+              {placing ? (
+                <span className="flex items-center gap-2">
+                  <Package size={18} className="animate-pulse" /> Placing Order...
+                </span>
+              ) : (
+                'Place Order'
+              )}
             </button>
             <p className="text-xs text-ink-400 text-center mt-3">By placing your order, you agree to our terms and conditions.</p>
           </div>

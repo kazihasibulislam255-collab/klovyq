@@ -275,13 +275,13 @@ export default function ProductDetailPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="card p-4">
                     <Truck size={20} className="text-ink-700 mb-2" />
-                    <p className="text-sm font-medium text-ink-900">Inside Dhaka</p>
-                    <p className="text-sm text-ink-500">2-4 business days — ৳60</p>
+                    <p className="text-sm font-medium text-ink-900">Standard Delivery</p>
+                    <p className="text-sm text-ink-500">2–4 days — ৳60</p>
                   </div>
                   <div className="card p-4">
                     <Truck size={20} className="text-ink-700 mb-2" />
-                    <p className="text-sm font-medium text-ink-900">Outside Dhaka</p>
-                    <p className="text-sm text-ink-500">3-7 business days — ৳120</p>
+                    <p className="text-sm font-medium text-ink-900">Express Delivery</p>
+                    <p className="text-sm text-ink-500">1–2 days — ৳100</p>
                   </div>
                 </div>
               </div>

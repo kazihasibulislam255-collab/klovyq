@@ -88,8 +88,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: Truck, title: 'Fast Delivery', desc: '2-7 days nationwide' },
-              { icon: ShieldCheck, title: 'Secure Payment', desc: 'COD & mobile banking' },
+              { icon: Truck, title: 'Fast Delivery', desc: '2-4 days nationwide' },
+              { icon: ShieldCheck, title: 'Secure Payment', desc: 'Cash on Delivery' },
               { icon: RefreshCw, title: 'Easy Returns', desc: '7-day return policy' },
               { icon: Headphones, title: '24/7 Support', desc: 'Always here to help' },
             ].map(item => {

@@ -217,7 +217,7 @@ export const products: Product[] = productSeeds.map((seed, i) => ({
   isStockClearance: seed.isStockClearance,
   description: seed.description,
   specifications: seed.specs,
-  deliveryInfo: 'Free delivery on orders over ৳2000. Standard delivery in 2-4 business days inside Dhaka, 3-7 days outside Dhaka. Cash on Delivery available.',
+  deliveryInfo: 'Standard Delivery: 2–4 days — ৳60. Express Delivery: 1–2 days — ৳100. Cash on Delivery available.',
   variants: {
     sizes: seed.sizes,
     colors: commonColors.slice(0, 4),

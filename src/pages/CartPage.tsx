@@ -1,8 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag, Truck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { formatBDT } from '@/data/mockData';
 import { useState } from 'react';
+
+const DELIVERY_OPTIONS = [
+  { value: 'standard', label: 'Standard (2–4 days)', charge: 60 },
+  { value: 'express', label: 'Express (1–2 days)', charge: 100 },
+];
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart();
@@ -10,6 +15,7 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [couponError, setCouponError] = useState('');
+  const [deliveryOption, setDeliveryOption] = useState('standard');
 
   const applyCoupon = () => {
     if (couponCode.toUpperCase() === 'KLOVYQ10') {
@@ -24,7 +30,7 @@ export default function CartPage() {
     }
   };
 
-  const deliveryCharge = subtotal >= 2000 || subtotal === 0 ? 0 : 60;
+  const deliveryCharge = DELIVERY_OPTIONS.find(d => d.value === deliveryOption)?.charge ?? 60;
   const total = subtotal - appliedDiscount + deliveryCharge;
 
   if (items.length === 0) {
@@ -128,6 +134,35 @@ export default function CartPage() {
               <p className="text-xs text-ink-300 mt-1">Try: KLOVYQ10 or WELCOME15</p>
             </div>
 
+            {/* Delivery option */}
+            <div className="mb-4">
+              <p className="text-sm font-medium text-ink-700 mb-2 flex items-center gap-1.5">
+                <Truck size={16} /> Delivery Option
+              </p>
+              <div className="space-y-2">
+                {DELIVERY_OPTIONS.map(opt => (
+                  <label
+                    key={opt.value}
+                    className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
+                      deliveryOption === opt.value ? 'border-ink-900 bg-ink-50' : 'border-ink-200 hover:border-ink-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="radio"
+                        name="cart-delivery"
+                        checked={deliveryOption === opt.value}
+                        onChange={() => setDeliveryOption(opt.value)}
+                        className="accent-ink-900"
+                      />
+                      <span className="text-sm font-medium text-ink-800">{opt.label}</span>
+                    </div>
+                    <span className="text-sm font-bold text-ink-900">{formatBDT(opt.charge)}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <div className="space-y-2.5 text-sm border-t border-ink-50 pt-4">
               <div className="flex justify-between text-ink-600">
                 <span>Subtotal</span>
@@ -141,7 +176,7 @@ export default function CartPage() {
               )}
               <div className="flex justify-between text-ink-600">
                 <span>Delivery Charge</span>
-                <span className="font-medium text-ink-900">{deliveryCharge === 0 ? 'FREE' : formatBDT(deliveryCharge)}</span>
+                <span className="font-medium text-ink-900">{formatBDT(deliveryCharge)}</span>
               </div>
               <div className="flex justify-between text-base font-bold text-ink-900 border-t border-ink-100 pt-3">
                 <span>Total</span>
@@ -149,14 +184,8 @@ export default function CartPage() {
               </div>
             </div>
 
-            {deliveryCharge === 0 && subtotal > 0 && (
-              <p className="text-xs text-success-600 mt-3 bg-success-50 rounded-lg p-2 text-center">
-                You got FREE delivery!
-              </p>
-            )}
-
             <button
-              onClick={() => navigate('/checkout', { state: { discount: appliedDiscount, deliveryCharge } })}
+              onClick={() => navigate('/checkout', { state: { discount: appliedDiscount, deliveryOption } })}
               className="w-full btn-primary mt-4"
             >
               Proceed to Checkout <ArrowRight size={18} />
