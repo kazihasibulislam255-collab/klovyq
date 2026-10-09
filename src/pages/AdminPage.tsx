@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useStore } from '@/context/StoreContext';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 import { formatBDT } from '@/data/mockData';
 import type { OrderStatus, Product } from '@/types';
 import {
   LayoutDashboard, Package, ShoppingBag, Users, Tags, TrendingUp,
   Plus, Edit2, Trash2, X, Search, DollarSign, ArrowUpRight, ArrowDownRight,
+  LogOut,
 } from 'lucide-react';
 
 const STATUS_OPTIONS: OrderStatus[] = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
@@ -26,6 +28,7 @@ export default function AdminPage() {
     addCategory, deleteCategory,
     updateOrderStatus, customerCount,
   } = useStore();
+  const { signOut } = useAdminAuth();
 
   const [tab, setTab] = useState<AdminTab>('dashboard');
   const [search, setSearch] = useState('');
@@ -50,7 +53,15 @@ export default function AdminPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-ink-900">Admin Dashboard</h1>
             <p className="text-sm text-ink-400 mt-1">Manage your store</p>
           </div>
-          <a href="/" className="text-sm font-medium text-ink-500 hover:text-ink-900">← Back to Store</a>
+          <div className="flex items-center gap-4">
+            <a href="/" className="text-sm font-medium text-ink-500 hover:text-ink-900">← Back to Store</a>
+            <button
+              onClick={() => signOut()}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-danger-600 hover:text-danger-700 px-3 py-2 rounded-lg hover:bg-danger-50 transition-all"
+            >
+              <LogOut size={16} /> Logout
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
